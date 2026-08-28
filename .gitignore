@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+packages/
+build/
+windows/flutter/
+linux/
+macos/
+web/
+ios/
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Flutter
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local

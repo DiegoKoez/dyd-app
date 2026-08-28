@@ -1,0 +1,182 @@
+DYD - MANUAL PARA INICIAR EL SERVIDOR
+======================================
+
+Este manual explica como iniciar el servidor de DYD (Node.js + Socket.IO)
+y como conectar la APK a el.
+
+La carpeta del servidor es:
+
+D:\proyectos\DYDAndroid\server
+
+
+1. REQUISITOS
+-------------
+
+1. Tener Node.js instalado (LTS):
+   https://nodejs.org
+
+2. Comprobar que este instalado. En una terminal ejecuta:
+
+   node --version
+   npm --version
+
+   Deben mostrar un numero de version. Si no se reconocen los comandos,
+   revisa la seccion 6 (Errores frecuentes).
+
+
+2. INSTALAR LAS DEPENDENCIAS (SOLO LA PRIMERA VEZ)
+---------------------------------------------------
+
+Abre una terminal en Visual Studio Code (Terminal > New Terminal) y
+ejecuta:
+
+cd D:\proyectos\DYDAndroid\server
+npm install
+
+Espera a que termine sin errores. Esto solo es necesario la primera vez,
+o cuando cambien las dependencias del servidor.
+
+
+3. INICIAR EL SERVIDOR
+-----------------------
+
+En una terminal ejecuta:
+
+cd D:\proyectos\DYDAndroid\server
+& "C:\Program Files\nodejs\npm.cmd" start
+
+Debe aparecer un mensaje similar a:
+
+Servidor DYD escuchando en el puerto 3000
+
+Deja esta terminal abierta y funcionando durante toda la partida.
+No cierres esta ventana ni presiones Ctrl+C mientras se juega.
+
+En PowerShell, el comando "npm start" (sin el .cmd) suele fallar con un
+error de firma digital ("no se puede cargar el archivo npm.ps1"). Por
+eso se usa "npm.cmd" directamente, sin necesidad de cambiar ninguna
+configuracion de seguridad de Windows.
+
+Si prefieres iniciar el servidor sin npm, usa directamente:
+
+& "C:\Program Files\nodejs\node.exe" index.js
+
+
+4. PROBAR QUE EL SERVIDOR FUNCIONA
+------------------------------------
+
+Sin cerrar la terminal del servidor, abre OTRA terminal en VS Code
+(icono + junto a la terminal, o Terminal > New Terminal) y ejecuta:
+
+Invoke-RestMethod http://localhost:3000/health
+
+La respuesta esperada es:
+
+ok
+----
+True
+
+Tambien puedes comprobarlo abriendo en un navegador:
+
+http://localhost:3000/health
+
+Debe mostrar:
+
+{"ok":true}
+
+
+5. CONECTAR EL CELULAR AL SERVIDOR
+-------------------------------------
+
+El celular y el computador deben estar en la misma red Wi-Fi.
+
+En el computador, en una terminal ejecuta:
+
+ipconfig
+
+Busca el valor de "Direccion IPv4", por ejemplo:
+
+192.168.1.82
+
+Desde el navegador del celular entra a:
+
+http://192.168.1.82:3000/health
+
+(cambia 192.168.1.82 por la IP real que muestre tu computador)
+
+Debe responder:
+
+{"ok":true}
+
+Si responde eso, en la app DYD del celular escribe en "Direccion del
+servidor":
+
+http://192.168.1.82:3000
+
+No escribas /health dentro de la app.
+No uses localhost desde el celular, no va a funcionar.
+
+Si el celular no logra conectar, revisa que el Firewall de Windows
+permita conexiones entrantes para Node.js en redes privadas.
+
+
+6. ERRORES FRECUENTES
+------------------------
+
+npm no se reconoce como comando, o aparece un error de firma digital
+("no se puede cargar el archivo npm.ps1"):
+
+& "C:\Program Files\nodejs\npm.cmd" install
+& "C:\Program Files\nodejs\npm.cmd" start
+
+node no se reconoce como comando:
+
+& "C:\Program Files\nodejs\node.exe" index.js
+
+Cannot find module (falta instalar dependencias):
+
+cd D:\proyectos\DYDAndroid\server
+npm install
+
+EADDRINUSE, puerto 3000 ya esta en uso:
+
+Ya hay un servidor corriendo (en esta u otra terminal). No inicies un
+segundo servidor, solo usa el que ya esta funcionando. Si necesitas
+cerrarlo, ve a esa terminal y presiona Ctrl+C.
+
+El celular no logra conectarse:
+
+- Verifica que ambos esten en la misma red Wi-Fi.
+- Usa la IP IPv4 del computador, no localhost.
+- Prueba primero /health desde el navegador del celular.
+- Revisa el Firewall de Windows (permitir Node.js en redes privadas).
+
+
+7. COMANDOS RAPIDOS (RESUMEN)
+--------------------------------
+
+Instalar dependencias (solo primera vez):
+
+cd D:\proyectos\DYDAndroid\server
+npm install
+
+Iniciar el servidor:
+
+cd D:\proyectos\DYDAndroid\server
+& "C:\Program Files\nodejs\npm.cmd" start
+
+Probar el servidor (otra terminal, sin cerrar la del servidor):
+
+Invoke-RestMethod http://localhost:3000/health
+
+Direccion para escribir en la app desde el celular:
+
+http://IP_DEL_COMPUTADOR:3000
+
+Comando rapido para obtener la IP del servidor:
+
+powershell -Command "(Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -notlike '127.*' -and $_.PrefixOrigin -ne 'WellKnown'}).IPAddress | Select-Object -First 1"
+
+
+FIN DEL MANUAL
+===============

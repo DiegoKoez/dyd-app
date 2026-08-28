@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter *)",
+      "Bash(select-string *)",
+      "Bash(findstr *)",
+      "Bash(cd *)",
+      "Bash(git checkout *)",
+      "Bash(mv *)",
+      "Read(d:\\proyectos/**)",
+      "Bash(netsh *)",
+      "Bash(curl *)",
+      "Bash(invoke-webrequest *)",
+      "Bash(select-object *)",
+      "Bash(type *)",
+      "Bash(get-content *)",
+      "Bash(timeout *)",
+      "Bash(dir *)",
+      "Bash(netstat *)",
+      "Bash(taskkill *)",
+      "Bash(npm start)",
+      "Bash(d:\\proyectos\\dydandroid\\iniciar_servidor.bat)",
+      "Bash(d:\\proyectos\\dydandroid\\iniciar_servidor_auto.bat)",
+      "Bash(d:\\proyectos\\dydandroid\\iniciar_simple.bat)",
+      "Read(C:\\Users\\koezg\\proyectos\\DYDAndroid/**)",
+      "Read(C:\\Users\\koezg\\DYDAndroid/**)",
+      "Bash(\"d:\\proyectos\\dydandroid\\iniciar_simple.bat\")",
+      "Bash(\"c:\\users\\koezg\\flutter\\packages\\flutter_tools\\bin\\tool_backend.bat\" *)",
+      "Bash(tasklist)",
+      "Bash(xcopy *)",
+      "Bash(del *)",
+      "Bash(get-item *)",
+      "Bash($libdir *)",
+      "Bash(get-childitem *)",
+      "Bash($_.length/1kb,2)",
+      "Bash(}})",
+      "Bash(start *)"
+    ]
+  },
+  "$version": 4
+}

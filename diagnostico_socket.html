@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Socket.IO</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+        .log { background: #0d0d0d; padding: 15px; margin-top: 20px; border-radius: 5px; max-height: 400px; overflow-y: auto; }
+        .success { color: #4ec9b0; }
+        .error { color: #f44747; }
+        .info { color: #9cdcfe; }
+        .warning { color: #ce9178; }
+        button { padding: 10px 20px; margin: 10px 0; cursor: pointer; background: #0e639c; color: white; border: none; border-radius: 3px; }
+        button:hover { background: #1177bb; }
+    </style>
+</head>
+<body>
+    <h1>🔌 Diagnóstico Socket.IO - DYD Server</h1>
+    
+    <div>
+        <label>URL del servidor:</label>
+        <input type="text" id="serverUrl" value="http://192.168.1.82:3000" style="padding: 5px; width: 300px;">
+        <button onclick="testConnection()">Testear Conexión</button>
+        <button onclick="createRoom()">Crear Sala (dm:createRoom)</button>
+    </div>
+    
+    <div id="status" style="margin: 15px 0; font-weight: bold;"></div>
+    
+    <div class="log" id="log"></div>
+
+    <script>
+        let socket = null;
+        const logEl = document.getElementById('log');
+        const statusEl = document.getElementById('status');
+
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            div.className = type;
+            logEl.appendChild(div);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(msg);
+        }
+
+        function clearStatus() {
+            statusEl.textContent = '';
+            statusEl.style.color = 'inherit';
+        }
+
+        function setStatus(msg, type = 'info') {
+            statusEl.textContent = msg;
+            statusEl.style.color = type === 'error' ? '#f44747' : type === 'success' ? '#4ec9b0' : '#9cdcfe';
+        }
+
+        function testConnection() {
+            clearStatus();
+            log('Iniciando prueba de conexión...', 'info');
+            
+            try {
+                socket = io(document.getElementById('serverUrl').value);
+                
+                socket.on('connect', () => {
+                    log(`✅ CONECTADO! ID: ${socket.id}`, 'success');
+                    log(`   Transporte: ${socket.io.engine.transport.name}`, 'info');
+                    log(`   URL: ${document.getElementById('serverUrl').value}`, 'info');
+                    
+                    // Testear evento simple
+                    log('   Enviando evento de prueba...', 'info');
+                    socket.emit('test:ping', { timestamp: Date.now() }, (response) => {
+                        log(`   ✅ Respuesta recibida: ${JSON.stringify(response)}`, 'success');
+                        log('   🎉 ¡Conexión Socket.IO funciona perfectamente!', 'success');
+                        setStatus('✅ Conexión Exitosa - Transporte: ' + socket.io.engine.transport.name, 'success');
+                    });
+                });
+                
+                socket.on('disconnect', (reason) => {
+                    log(`❌ DISCONNECT: ${reason}`, 'error');
+                    setStatus('❌ Desconectado: ' + reason, 'error');
+                });
+                
+                socket.on('error', (err) => {
+                    log(`❌ ERROR: ${err.message}`, 'error');
+                    setStatus(`❌ Error: ${err.message}`, 'error');
+                });
+                
+                socket.on('connect_error', (err) => {
+                    log(`❌ CONNECT ERROR: ${err.message}`, 'error');
+                    log(`   Tipo: ${err.constructor.name}`, 'error');
+                    setStatus(`❌ Error de conexión: ${err.message}`, 'error');
+                });
+                
+                socket.on('connect_timeout', () => {
+                    log('⚠️  TIMEOUT: La conexión tardó más de 30 segundos', 'warning');
+                    setStatus('⚠️  Timeout de conexión (>30s)', 'warning');
+                });
+                
+                socket.on('unauthorized', (err) => {
+                    log(`❌ UNAUTHORIZED: ${err.message}`, 'error');
+                    setStatus('❌ Autenticación rechazada', 'error');
+                });
+
+                log('Esperando conexión (máx 45 segundos)...', 'info');
+                setTimeout(() => {
+                    if (socket.connected) {
+                        log('✅ Conexión establecida exitosamente', 'success');
+                    } else {
+                        log('❌ Timeout: Conexión no establecida en 45 segundos', 'error');
+                        setStatus('❌ Timeout - Verifica firewall y red', 'error');
+                    }
+                }, 45000);
+                
+            } catch (err) {
+                log(`❌ EXCEPCIÓN: ${err.message}`, 'error');
+                setStatus(`❌ Excepción: ${err.message}`, 'error');
+            }
+        }
+
+        function createRoom() {
+            if (!socket || !socket.connected) {
+                log('❌ No hay conexión activa. Testea la conexión primero.', 'error');
+                setStatus('❌ Sin conexión activa', 'error');
+                return;
+            }
+            
+            log('Creando sala con dm:createRoom...', 'info');
+            
+            socket.emit('dm:createRoom', (response) => {
+                if (response && response.code) {
+                    log(`✅ Sala creada! Código: ${response.code}`, 'success');
+                    setStatus(`✅ Sala creada - Código: ${response.code}`, 'success');
+                } else if (response && response.success === false) {
+                    log(`❌ Error del servidor: ${response.error}`, 'error');
+                    setStatus(`❌ Error: ${response.error}`, 'error');
+                } else {
+                    log(`📦 Respuesta: ${JSON.stringify(response)}`, 'info');
+                }
+            });
+        }
+
+        // Log inicial
+        log('🔍 Diagnóstico Socket.IO listo', 'info');
+        log('👉 Usa el botón "Testear Conexión" para verificar', 'info');
+    </script>
+</body>
+</html>

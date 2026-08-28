@@ -1,0 +1,30 @@
+/// List de colores de pelo disponibles
+class HairColorsData {
+  static const List<String> all = [
+    'negro',
+    'castaño oscuro',
+    'castaño',
+    'castaño claro',
+    'rubio oscuro',
+    'rubio',
+    'rubio platino',
+    'marrón',
+    'rojo',
+    'rojo fuego',
+    'morado',
+    'azul',
+    'verde',
+    'naranja',
+    'rosa',
+    'morado oscuro',
+    'rosa claro',
+    'plateado',
+    'blanco',
+    'dorado',
+    'violeta',
+    'turquesa',
+    'cian',
+    'magenta',
+    'amarillo',
+  ];
+}

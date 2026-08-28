@@ -1,0 +1,33 @@
+============================================
+    DYD SERVER - INICIO RAPIDO
+============================================
+
+1. Ejecuta: INICIAR_SERVIDOR_ADMIN.bat
+   (haz doble clic, acepta los permisos de administrador)
+
+2. Espera a que aparezca:
+   "Servidor DYD escuchando en puerto 3000"
+
+3. En el celular/APP:
+   - Toca "Buscar servidor en la red"
+   - O ingresa la IP que muestra el servidor
+
+============================================
+    SI DA ERROR DE CONEXION
+============================================
+
+1. Desactiva el firewall temporalmente:
+   - Busca "Windows Defender Firewall"
+   - Clic en "Activar o desactivar"
+   - Desactiva para redes privadas
+   - Prueba de nuevo
+
+2. Si usa celular, asegurate de estar en la MISMA red WiFi
+
+============================================
+    PARA LA APK / .EXE
+============================================
+
+La app detecta automaticamente el servidor en la red.
+Si no lo detecta, ingresa manualmente la IP que muestra
+el servidor (ej: http://192.168.1.82:3000)

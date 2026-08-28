@@ -1,0 +1,190 @@
+DYD - MANUAL PARA GENERAR EL .EXE (WINDOWS) Y LA APK (ANDROID)
+================================================================
+
+Este manual explica, paso a paso, los comandos para compilar la app DYD
+como programa de escritorio (.exe) y como aplicación Android (.apk).
+
+La carpeta del proyecto es:
+
+D:\proyectos\DYDAndroid
+
+
+0. REQUISITOS (SOLO LA PRIMERA VEZ)
+-------------------------------------
+
+Antes de compilar por primera vez en un computador nuevo, asegúrate de
+tener instalado:
+
+- Flutter SDK (con "flutter doctor" sin errores en Windows y Android).
+- Visual Studio 2022 con "Desarrollo para el escritorio con C++" (para
+  el .exe de Windows).
+- Android Studio + Android SDK (para la APK).
+- JDK 17 (por ejemplo Eclipse Temurin 17). Si Flutter usa otro JDK
+  distinto al 17, configúralo con:
+
+  flutter config --jdk-dir "RUTA_A_TU_JDK_17"
+
+Comprueba que todo esté correcto con:
+
+cd D:\proyectos\DYDAndroid
+flutter doctor -v
+
+Debe mostrar una marca verde [√] en "Windows Version", "Visual Studio"
+y "Android toolchain". Si alguno falla, revisa MANUAL_VISUAL_STUDIO_CODE.txt.
+
+
+1. INSTALAR/ACTUALIZAR LAS DEPENDENCIAS DEL PROYECTO
+-------------------------------------------------------
+
+Siempre que abras el proyecto por primera vez, o después de cambiar
+pubspec.yaml, ejecuta:
+
+cd D:\proyectos\DYDAndroid
+flutter pub get
+
+
+2. GENERAR EL .EXE DE WINDOWS
+--------------------------------
+
+Para compilar y ejecutar la app de escritorio directamente (modo debug,
+abre una ventana con la app corriendo):
+
+cd D:\proyectos\DYDAndroid
+flutter run -d windows
+
+Para generar solo el archivo .exe sin abrir la app (modo debug):
+
+cd D:\proyectos\DYDAndroid
+flutter build windows --debug
+
+El ejecutable queda en:
+
+D:\proyectos\DYDAndroid\build\windows\x64\runner\Debug\dyd_app.exe
+
+Para generar la versión final optimizada (release), usa:
+
+cd D:\proyectos\DYDAndroid
+flutter build windows --release
+
+El ejecutable de release queda en:
+
+D:\proyectos\DYDAndroid\build\windows\x64\runner\Release\dyd_app.exe
+
+Puedes abrir el .exe haciendo doble clic, o desde la terminal:
+
+Start-Process "D:\proyectos\DYDAndroid\build\windows\x64\runner\Debug\dyd_app.exe"
+
+Para abrir dos ventanas a la vez (por ejemplo, para probar como DM y
+como jugador en el mismo computador), ejecuta ese mismo comando dos
+veces.
+
+
+3. GENERAR LA APK DE ANDROID
+--------------------------------
+
+Para la APK de pruebas (debug):
+
+cd D:\proyectos\DYDAndroid
+flutter build apk --debug
+
+El archivo queda en:
+
+D:\proyectos\DYDAndroid\build\app\outputs\flutter-apk\app-debug.apk
+
+Para la APK final optimizada (release, más pequeña y rápida):
+
+cd D:\proyectos\DYDAndroid
+flutter build apk --release
+
+El archivo queda en:
+
+D:\proyectos\DYDAndroid\build\app\outputs\flutter-apk\app-release.apk
+
+Nota: la primera vez que generes una APK en un computador nuevo, Gradle
+puede tardar varios minutos descargando dependencias. Es normal.
+
+
+4. COPIAR LA APK AL CELULAR
+-------------------------------
+
+1. Conecta el celular por USB o usa Google Drive/Telegram/correo.
+2. Copia el archivo app-debug.apk (o app-release.apk) al celular.
+3. En el celular, abre el archivo y pulsa Instalar.
+4. Si Android bloquea la instalación, permite temporalmente instalar
+   aplicaciones desconocidas para la app que abrió el archivo.
+
+
+5. ERRORES FRECUENTES
+-------------------------
+
+No Android SDK found / JAVA_HOME invalido:
+
+flutter doctor -v
+
+Revisa que "Android toolchain" y el JDK muestren rutas válidas. Si
+JAVA_HOME del sistema apunta a una carpeta que no existe, corrígela en
+Variables de entorno de Windows, o usa:
+
+flutter config --jdk-dir "RUTA_A_TU_JDK_17"
+
+Some Android licenses not accepted:
+
+flutter doctor --android-licenses
+
+Responde "y" a todas las preguntas.
+
+Unsupported class file major version (Gradle falla al compilar):
+
+Significa que Gradle está usando un JDK incompatible (por ejemplo Java
+23). Configura el JDK 17 con:
+
+flutter config --jdk-dir "RUTA_A_TU_JDK_17"
+
+Un plugin (por ejemplo share_plus) falla con errores de Gradle nuevos:
+
+Puede requerir una versión más reciente de Android Gradle Plugin de la
+que usa este proyecto. Baja la versión del paquete en pubspec.yaml a
+una compatible y ejecuta:
+
+flutter pub get
+flutter build apk --debug
+
+Visual Studio no encontrado (para el .exe):
+
+Instala Visual Studio 2022 con la carga de trabajo "Desarrollo para el
+escritorio con C++" desde https://visualstudio.microsoft.com y vuelve a
+correr "flutter doctor -v".
+
+
+6. COMANDOS RAPIDOS (RESUMEN)
+---------------------------------
+
+Instalar dependencias:
+
+cd D:\proyectos\DYDAndroid
+flutter pub get
+
+Generar y abrir el .exe (debug):
+
+flutter run -d windows
+
+Generar solo el .exe (debug / release):
+
+flutter build windows --debug
+flutter build windows --release
+
+Generar la APK (debug / release):
+
+flutter build apk --debug
+flutter build apk --release
+
+Ubicación de los archivos generados:
+
+.exe debug   -> build\windows\x64\runner\Debug\dyd_app.exe
+.exe release -> build\windows\x64\runner\Release\dyd_app.exe
+APK debug    -> build\app\outputs\flutter-apk\app-debug.apk
+APK release  -> build\app\outputs\flutter-apk\app-release.apk
+
+
+FIN DEL MANUAL
+===============

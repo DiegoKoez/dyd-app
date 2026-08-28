@@ -1,0 +1,28 @@
+INSTRUCCIONES PARA EL AMIGO - SERVIDOR D&D
+=============================================
+
+1. DESCOMPRIMIR EL ARCHIVO
+   - Recibirás un archivo .zip
+   - Haz clic derecho y selecciona "Extraer aqui" o "Extraer en DYDAndroid"
+   - Asegúrate de que quede una carpeta llamada "DYDAndroid"
+
+2. INICIAR EL SERVIDOR
+   - Entra en la carpeta DYDAndroid
+   - Busca el archivo llamado "INICIAR_SERVIDOR.bat"
+   - Haz doble clic en él
+   - Se abrira una ventana negra (terminal) que mostrara la IP y el puerto
+
+3. COMPARTIR LA IP
+   - En la terminal veras algo como: http://192.168.1.100:3000
+   - Comparte esa direccion con tus amigos
+   - Ellos la escriben en la app para conectarse
+
+4. SI ALGUIEN NO SE PUEDE CONECTAR
+   - Verifica que todos esten en la misma red WiFi
+   - Asegurate de que el firewall de Windows no bloquea el servidor
+   - Si usas WiFi de datos moviles, no funcionara (necesitan misma red)
+
+5. PARA DETENER EL SERVIDOR
+   - Solo cierra la ventana negra o presiona Ctrl+C
+
+NOTA: No cierres la ventana del servidor mientras esten jugando.

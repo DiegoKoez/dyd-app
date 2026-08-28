@@ -1,0 +1,47 @@
+COMANDOS PARA LEVANTAR LA APP D&D
+===================================
+
+REQUISITOS
+----------
+- Tener Flutter instalado y en el PATH
+- Tener Node.js instalado y en el PATH
+- Tener las dependencias instaladas:
+  - Flutter: flutter pub get
+  - Servidor: cd server && npm install
+
+LEVANTAR TODO DESDE CERO
+-------------------------
+1. Terminal 1 - Servidor:
+   cd D:\proyectos\DYDAndroid\server
+   node index.js
+
+2. Terminal 2 - App Flutter:
+   cd D:\proyectos\DYDAndroid
+   flutter run
+
+REINICIAR SERVIDOR (sin cerrar terminal)
+-----------------------------------------
+1. En la terminal donde corre el servidor:
+   Ctrl + C
+
+2. Volver a levantar:
+   node index.js
+
+O si preferís un one-liner (en PowerShell):
+   cd D:\proyectos\DYDAndroid\server; node index.js
+
+BUILD APK RELEASE
+-----------------
+flutter build apk --release
+El APK se genera en: build\app\outputs\flutter-apk\app-release.apk
+
+BUILD EXE RELEASE (Windows)
+----------------------------
+flutter build windows --release
+Los archivos se generan en: build\windows\x64\release\
+
+NOTAS
+-----
+- El servidor corre en el puerto 3000 por defecto
+- La app se conecta automáticamente al servidor en localhost:3000
+- Para conectar desde otro dispositivo en la misma red, usar la IP de la PC:3000

@@ -1,0 +1,130 @@
+import '../models/item.dart';
+
+/// Static catalog of items the Dungeon Master can hand out to players.
+const List<GameItem> kItems = [
+  GameItem(
+    id: 'pocion_curacion',
+    name: 'Poción de curación',
+    description: 'Restaura puntos de vida al beberla.',
+    effect: 'curacion',
+    damageDice: '2d4+2',
+  ),
+  GameItem(
+    id: 'pocion_curacion_mayor',
+    name: 'Poción de curación mayor',
+    description: 'Restaura una gran cantidad de vida al beberla.',
+    effect: 'curacion',
+    damageDice: '4d4+4',
+  ),
+  GameItem(
+    id: 'veneno',
+    name: 'Frasco de veneno',
+    description: 'Se puede untar en un arma para envenenar al objetivo.',
+    effect: 'veneno',
+    damageDice: '1d6',
+  ),
+  GameItem(
+    id: 'cristal_hielo',
+    name: 'Cristal de hielo',
+    description: 'Congela lo que toca por un instante.',
+    effect: 'hielo',
+    damageDice: '1d6',
+  ),
+  GameItem(
+    id: 'cuerda',
+    name: 'Cuerda resistente',
+    description: 'Útil para atar, escalar o inmovilizar.',
+    effect: 'utilidad',
+  ),
+  GameItem(
+    id: 'antorcha',
+    name: 'Antorcha',
+    description: 'Ilumina y puede prender fuego a su objetivo.',
+    effect: 'fuego',
+    damageDice: '1d4',
+  ),
+  GameItem(
+    id: 'llave_oxidada',
+    name: 'Llave oxidada',
+    description: 'Abre... algo. Nadie recuerda qué.',
+    effect: 'utilidad',
+  ),
+  GameItem(
+    id: 'pergamino_fuego',
+    name: 'Pergamino de bola de fuego',
+    description: 'Un solo uso, hace daño de fuego en área.',
+    effect: 'fuego',
+    damageDice: '3d6',
+  ),
+  GameItem(
+    id: 'amuleto',
+    name: 'Amuleto de la suerte',
+    description: 'Dicen que repele la mala fortuna.',
+    effect: 'utilidad',
+  ),
+  GameItem(
+    id: 'fogata_portatil',
+    name: 'Kit de fogata',
+    description: 'Yesca y leña para acampar y cocinar en el camino.',
+    effect: 'fogata',
+  ),
+  GameItem(
+    id: 'racion_comida',
+    name: 'Ración de comida',
+    description: 'Comida seca para un día de viaje.',
+    effect: 'comida',
+  ),
+  GameItem(
+    id: 'pan_de_viaje',
+    name: 'Pan de viaje élfico',
+    description: 'Muy nutritivo; una porción pequeña sacia todo un día.',
+    effect: 'comida',
+  ),
+  GameItem(
+    id: 'anillo_congelante',
+    name: 'Anillo congelante',
+    description: 'Al usarlo, congela el objetivo por un instante.',
+    effect: 'hielo',
+    damageDice: '2d6',
+  ),
+  GameItem(
+    id: 'collar_maldito',
+    name: 'Collar maldito',
+    description: 'Un objeto oscuro: al usarlo, el jugador gana 1 turno extra.',
+    effect: 'utilidad',
+  ),
+  GameItem(
+    id: 'guantelete_ardiente',
+    name: 'Guantelete ardiente',
+    description: 'El próximo golpe cuerpo a cuerpo arde en llamas.',
+    effect: 'fuego',
+    damageDice: '2d8',
+  ),
+  GameItem(
+    id: 'bota_del_viajero',
+    name: 'Bota del viajero',
+    description: 'Duplica la velocidad de quien la usa por un momento.',
+    effect: 'utilidad',
+  ),
+  GameItem(
+    id: 'daga_venenosa',
+    name: 'Daga envenenada',
+    description: 'Un solo uso: envenena gravemente al objetivo.',
+    effect: 'veneno',
+    damageDice: '3d4',
+  ),
+  GameItem(
+    id: 'espejo_roto',
+    name: 'Espejo roto',
+    description: 'Refleja el próximo ataque de vuelta a quien lo lanzó.',
+    effect: 'utilidad',
+  ),
+  GameItem(
+    id: 'polvo_hadas',
+    name: 'Polvo de hadas',
+    description: 'Cura heridas leves y levanta el ánimo del grupo.',
+    effect: 'curacion',
+    damageDice: '1d4+1',
+  ),
+];
+

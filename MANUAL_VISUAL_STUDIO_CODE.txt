@@ -1,0 +1,379 @@
+DYD - MANUAL PARA USAR VISUAL STUDIO CODE
+==========================================
+
+Este manual explica como abrir el proyecto Flutter en Visual Studio Code,
+generar una APK e instalarla en un celular Android.
+
+IMPORTANTE:
+- La carpeta correcta del proyecto es D:\proyectos\DYDAndroid
+- No abras solamente la carpeta app.
+- El archivo app\src\main\java\org\example\App.java pertenece a un proyecto
+  Java antiguo y no es la aplicacion Flutter actual.
+
+
+1. INSTALAR LOS PROGRAMAS NECESARIOS
+-------------------------------------
+
+En el computador instala:
+
+1. Visual Studio Code:
+   https://code.visualstudio.com
+
+2. Flutter SDK:
+   https://docs.flutter.dev/get-started/install/windows
+
+3. Android Studio:
+   https://developer.android.com/studio
+
+4. Node.js LTS, solo si este computador tambien ejecutara el servidor:
+   https://nodejs.org
+
+En Visual Studio Code instala estas extensiones:
+
+- Flutter
+- Dart
+
+Para instalarlas:
+1. Abre Visual Studio Code.
+2. Pulsa el icono de extensiones en la barra izquierda.
+3. Busca Flutter.
+4. Pulsa Install.
+5. La extension Dart se instalara tambien si es necesario.
+
+
+2. COPIAR EL PROYECTO
+---------------------
+
+Copia la carpeta completa del proyecto a este computador:
+
+D:\proyectos\DYDAndroid
+
+Puedes usar USB, Google Drive, OneDrive u otro medio.
+
+No es suficiente copiar solo la carpeta lib.
+
+La carpeta principal debe contener archivos como:
+
+D:\proyectos\DYDAndroid\
+    pubspec.yaml
+    lib\
+    android\
+    test\
+    server\
+
+
+3. ABRIR EL PROYECTO EN VISUAL STUDIO CODE
+------------------------------------------
+
+1. Abre Visual Studio Code.
+2. Pulsa File > Open Folder.
+3. Selecciona:
+
+   D:\proyectos\DYDAndroid
+
+4. Pulsa Select Folder.
+
+Comprueba que en el explorador de VS Code aparece:
+
+- pubspec.yaml
+- lib
+- android
+- server
+
+Si solo aparece app o src, abriste la carpeta incorrecta.
+
+
+4. ABRIR LA TERMINAL DE VS CODE
+-------------------------------
+
+En Visual Studio Code pulsa:
+
+Terminal > New Terminal
+
+Se abrira una terminal en la parte inferior.
+
+Comprueba que estas en la carpeta del proyecto. La ruta debe terminar en:
+
+D:\proyectos\DYDAndroid
+
+Si no estas en esa carpeta, escribe:
+
+cd D:\proyectos\DYDAndroid
+
+
+5. COMPROBAR FLUTTER
+--------------------
+
+En la terminal de VS Code ejecuta:
+
+flutter --version
+
+Despues ejecuta:
+
+flutter doctor
+
+Flutter debe estar instalado correctamente.
+
+Si aparece un error en Android toolchain, abre Android Studio y sigue el
+paso siguiente.
+
+
+6. CONFIGURAR ANDROID STUDIO Y EL SDK
+-------------------------------------
+
+Android Studio se usa para instalar las herramientas de Android. No es
+obligatorio generar la APK desde Android Studio.
+
+1. Abre Android Studio.
+2. Pulsa More Actions.
+3. Entra en SDK Manager.
+4. Instala una plataforma Android reciente.
+5. En SDK Tools marca:
+
+   Android SDK Build-Tools
+   Android SDK Command-line Tools
+   Android SDK Platform-Tools
+
+6. Pulsa Apply.
+7. Espera a que termine.
+
+En la parte superior de SDK Manager aparece la ubicacion del SDK.
+Normalmente es parecida a:
+
+C:\Users\TU_USUARIO\AppData\Local\Android\Sdk
+
+En la terminal de VS Code configura esa ruta. Cambia TU_USUARIO por el
+nombre real de la cuenta de Windows:
+
+flutter config --android-sdk "C:\Users\TU_USUARIO\AppData\Local\Android\Sdk"
+
+Acepta las licencias con:
+
+flutter doctor --android-licenses
+
+Responde y a todas las preguntas.
+
+Vuelve a comprobar:
+
+flutter doctor
+
+Debe aparecer una marca verde junto a Android toolchain.
+
+
+7. INSTALAR LAS DEPENDENCIAS FLUTTER
+------------------------------------
+
+En la terminal de VS Code ejecuta:
+
+cd D:\proyectos\DYDAndroid
+flutter pub get
+
+Espera a que termine sin errores.
+
+
+8. GENERAR LA APK DE PRUEBA
+----------------------------
+
+Ejecuta:
+
+cd D:\proyectos\DYDAndroid
+flutter build apk --debug
+
+Si termina correctamente, el archivo generado estara en:
+
+D:\proyectos\DYDAndroid\build\app\outputs\flutter-apk\app-debug.apk
+
+Esta es la APK que debes pasar al celular.
+
+
+9. COPIAR LA APK AL CELULAR
+----------------------------
+
+Opcion A: cable USB
+
+1. Conecta el celular al computador.
+2. Desbloquea el celular.
+3. Selecciona Transferencia de archivos si aparece una pregunta.
+4. Abre la carpeta Download del celular.
+5. Copia dentro el archivo app-debug.apk.
+6. En el celular abre Archivos.
+7. Entra en Download.
+8. Pulsa app-debug.apk.
+9. Pulsa Instalar.
+
+Opcion B: Google Drive, Telegram o correo
+
+1. Sube o envia app-debug.apk.
+2. Descarga el archivo en el celular.
+3. Abre el archivo.
+4. Pulsa Instalar.
+
+Si Android bloquea la instalacion, permite temporalmente instalar
+aplicaciones desconocidas para la aplicacion que abrio el archivo.
+
+
+10. INICIAR EL SERVIDOR LOCAL
+-----------------------------
+
+Si el servidor tambien se ejecutara en este computador, copia la carpeta
+server y ten Node.js instalado.
+
+En una terminal de VS Code ejecuta:
+
+cd D:\proyectos\DYDAndroid\server
+npm install
+node index.js
+
+Si npm no se reconoce en PowerShell, usa:
+
+& "C:\Program Files\nodejs\npm.cmd" install
+
+Si node no se reconoce, usa:
+
+& "C:\Program Files\nodejs\node.exe" index.js
+
+Debe aparecer:
+
+Servidor DYD escuchando en el puerto 3000
+
+No cierres esta terminal durante la partida.
+
+Si el servidor ya esta funcionando, no lo inicies por segunda vez.
+
+
+11. PROBAR EL SERVIDOR
+----------------------
+
+Abre otra terminal en VS Code sin cerrar la terminal del servidor.
+
+Ejecuta:
+
+Invoke-RestMethod http://localhost:3000/health
+
+Debe devolver ok y True.
+
+Tambien puedes abrir en el navegador:
+
+http://localhost:3000/health
+
+La respuesta esperada es:
+
+{"ok":true}
+
+
+12. CONECTAR EL CELULAR AL SERVIDOR
+------------------------------------
+
+El celular y el computador deben estar conectados a la misma red Wi-Fi.
+
+En el computador ejecuta:
+
+ipconfig
+
+Busca Direccion IPv4. Por ejemplo:
+
+192.168.1.82
+
+Desde el navegador del celular prueba:
+
+http://192.168.1.82:3000/health
+
+Cambia 192.168.1.82 por la IP real del computador.
+
+Debe aparecer:
+
+{"ok":true}
+
+En la APK DYD escribe en Direccion del servidor:
+
+http://192.168.1.82:3000
+
+No escribas /health dentro de la aplicacion.
+No uses localhost desde el celular.
+
+Si el celular no conecta, permite Node.js en el Firewall de Windows para
+redes privadas.
+
+
+13. PROBAR LA PARTIDA
+----------------------
+
+Como Dungeon Master:
+
+1. Abre la APK.
+2. Escribe la direccion del servidor.
+3. Pulsa Crear sala.
+4. Comparte el codigo.
+5. Selecciona monstruos.
+6. Pulsa Iniciar partida.
+
+Como jugador:
+
+1. Abre la APK en otro celular.
+2. Escribe la misma direccion del servidor.
+3. Pulsa Unirse a sala.
+4. Introduce el codigo.
+5. Escribe tu nombre.
+6. Crea el personaje.
+
+
+14. ERRORES FRECUENTES
+----------------------
+
+No Android SDK found:
+
+- Abre Android Studio.
+- Instala el SDK desde SDK Manager.
+- Ejecuta flutter doctor.
+
+npm no se reconoce:
+
+& "C:\Program Files\nodejs\npm.cmd" install
+
+node no se reconoce:
+
+& "C:\Program Files\nodejs\node.exe" index.js
+
+Cannot find module:
+
+cd D:\proyectos\DYDAndroid\server
+npm install
+
+EADDRINUSE, puerto 3000 ocupado:
+
+Ya existe un servidor funcionando. No inicies otro.
+
+El celular no conecta:
+
+- Ambos dispositivos deben estar en la misma Wi-Fi.
+- Usa la IP IPv4 del computador.
+- No uses localhost en el celular.
+- Comprueba el Firewall de Windows.
+- Prueba primero la direccion /health.
+
+
+15. COMANDOS RAPIDOS
+--------------------
+
+Generar APK:
+
+cd D:\proyectos\DYDAndroid
+flutter pub get
+flutter build apk --debug
+
+Ubicacion de la APK:
+
+D:\proyectos\DYDAndroid\build\app\outputs\flutter-apk\app-debug.apk
+
+Iniciar servidor:
+
+cd D:\proyectos\DYDAndroid\server
+& "C:\Program Files\nodejs\node.exe" index.js
+
+Direccion para el celular:
+
+http://IP_DEL_COMPUTADOR:3000
+
+
+FIN DEL MANUAL
+===============
