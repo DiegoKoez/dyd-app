@@ -26,16 +26,60 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Servidor local para jugar en la misma red WiFi
-    const serverUrl = 'http://localhost:8080';
-    ServerPrefs.saveUrl(serverUrl).then((_) {
-      if (!mounted) return;
-      setState(() {
-        _urlController.text = serverUrl;
-        _loadingSavedUrl = false;
-      });
-      _updateEffectiveUrl();
+    _loadSavedSession();
+  }
+
+  Future<void> _loadSavedSession() async {
+    // Cargar URL guardada
+    final savedUrl = await ServerPrefs.getSavedUrl();
+    final session = await ServerPrefs.getSavedSession();
+    
+    if (!mounted) return;
+    
+    // Si hay una sesión guardada, intentar restaurar
+    if (session != null && savedUrl != null) {
+      final savedRoomCode = session['roomCode'] as String?;
+      final savedPlayerId = session['playerId'] as String?;
+      final wasDm = session['isDm'] as bool? ?? false;
+      
+      if (savedRoomCode != null && savedPlayerId != null && savedPlayerId.isNotEmpty) {
+        print('[HomeScreen] Restoring session: room=$savedRoomCode dm=$wasDm');
+        setState(() {
+          _urlController.text = savedUrl;
+          _loadingSavedUrl = false;
+        });
+        _updateEffectiveUrl();
+        
+        // Intentar reconectar automáticamente
+        _restoreSession(savedUrl, savedRoomCode, savedPlayerId, wasDm);
+        return;
+      }
+    }
+    
+    // Si no hay sesión guardada, usar localhost por defecto
+    final url = savedUrl ?? 'http://localhost:8080';
+    await ServerPrefs.saveUrl(url);
+    setState(() {
+      _urlController.text = url;
+      _loadingSavedUrl = false;
     });
+    _updateEffectiveUrl();
+  }
+
+  Future<void> _restoreSession(String url, String roomCode, String playerId, bool wasDm) async {
+    try {
+      final session = context.read<GameSession>();
+      await session.connect(url);
+      session.serverUrl = url;
+      session.roomCode = roomCode;
+      session.myPlayerId = playerId;
+      session.isDm = wasDm;
+      session.connected = true;
+      session.notifyListeners();
+      print('[HomeScreen] Session restored successfully');
+    } catch (e) {
+      print('[HomeScreen] Failed to restore session: $e');
+    }
   }
 
   @override

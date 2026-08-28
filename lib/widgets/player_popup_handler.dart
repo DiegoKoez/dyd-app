@@ -74,39 +74,46 @@ class _PlayerPopupHandlerState extends State<PlayerPopupHandler> with WidgetsBin
   void _checkPopups() {
     if (!mounted) return;
 
-    // Verificar arma
+    // Verificar arma (con prioridad)
     if (!_weaponDialogPending && _session.lastReceivedWeapon != null) {
-      // Verificar si ya se mostró antes
-      _popupAlreadyShown('weapon').then((alreadyShown) async {
-        if (!alreadyShown) {
-          _weaponDialogPending = true;
-          final weapon = _session.lastReceivedWeapon!;
-          showWeaponReceivedDialog(context, weapon).then((_) {
-            _weaponDialogPending = false;
-            if (mounted) {
-              _session.clearReceivedWeapon();
-              _markPopupShown('weapon');
-            }
-          });
-        }
-      });
+      _showWeaponDialog();
+      return;
     }
 
     // Verificar objeto
     if (!_itemDialogPending && _session.lastReceivedItem != null) {
-      _popupAlreadyShown('item').then((alreadyShown) async {
-        if (!alreadyShown) {
-          _itemDialogPending = true;
-          final item = _session.lastReceivedItem!;
-          showItemReceivedDialog(context, item).then((_) {
-            _itemDialogPending = false;
-            if (mounted) {
-              _session.clearReceivedItem();
-              _markPopupShown('item');
-            }
-          });
-        }
-      });
+      _showItemDialog();
+      return;
+    }
+  }
+
+  Future<void> _showWeaponDialog() async {
+    if (_weaponDialogPending) return;
+    _weaponDialogPending = true;
+    try {
+      final weapon = _session.lastReceivedWeapon!;
+      print('[PopupHandler] Showing weapon dialog: ${weapon.name}');
+      await showWeaponReceivedDialog(context, weapon);
+      _session.clearReceivedWeapon();
+    } catch (e) {
+      print('[PopupHandler] Weapon dialog error: $e');
+    } finally {
+      _weaponDialogPending = false;
+    }
+  }
+
+  Future<void> _showItemDialog() async {
+    if (_itemDialogPending) return;
+    _itemDialogPending = true;
+    try {
+      final item = _session.lastReceivedItem!;
+      print('[PopupHandler] Showing item dialog: ${item.name}');
+      await showItemReceivedDialog(context, item);
+      _session.clearReceivedItem();
+    } catch (e) {
+      print('[PopupHandler] Item dialog error: $e');
+    } finally {
+      _itemDialogPending = false;
     }
   }
 

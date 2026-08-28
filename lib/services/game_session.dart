@@ -8,6 +8,7 @@ import '../models/battle_monster.dart';
 import '../models/character.dart';
 import '../models/character_class.dart';
 import '../models/item.dart';
+import '../services/server_prefs.dart';
 import '../models/monster.dart';
 import '../models/player_info.dart';
 import '../models/race.dart';
@@ -454,6 +455,13 @@ class GameSession extends ChangeNotifier {
     print('[GameSession] Received response: $response');
     roomCode = response['code'] as String;
     isDm = true;
+    // Guardar sesión para restaurar en web
+    await ServerPrefs.saveSession(
+      roomCode: roomCode!,
+      playerId: myPlayerId ?? '',
+      playerName: null,
+      isDm: true,
+    );
     notifyListeners();
     print('[GameSession] roomCode set to: $roomCode');
     return roomCode!;
@@ -499,6 +507,13 @@ class GameSession extends ChangeNotifier {
       roomCode = code;
       isDm = false;
       myPlayerId = playerId;
+      // Guardar sesión para restaurar en web
+      await ServerPrefs.saveSession(
+        roomCode: code,
+        playerId: playerId,
+        playerName: playerName,
+        isDm: false,
+      );
       if (characterJson != null) {
         myCharacter = Character.fromJson(characterJson);
         myCurrentHp = myCharacter!.maxHp;

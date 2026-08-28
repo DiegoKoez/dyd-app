@@ -163,10 +163,22 @@ class _WeaponAssignmentScreenState extends State<WeaponAssignmentScreen> {
                         icon: const Icon(Icons.image),
                         tooltip: 'Agregar imagen',
                         onPressed: () async {
-                          // Para armas, siempre buscar como arma
-                          final base64 = await showImageSearchDialog(context, _weaponController.text.trim(), isWeapon: true);
-                          if (base64 != null && mounted) {
-                            setState(() => _pendingImageBase64 = base64);
+                          try {
+                            final base64 = await showImageSearchDialog(context, _weaponController.text.trim(), isWeapon: true);
+                            if (base64 != null && mounted) {
+                              setState(() => _pendingImageBase64 = base64);
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Imagen agregada al arma')),
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error al buscar imagen: $e')),
+                              );
+                            }
                           }
                         },
                       ),
