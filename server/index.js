@@ -20,12 +20,19 @@ app.use(cors({
 }));
 
 // Servir archivos web de Flutter
-app.use(express.static(path.join(__dirname, '..', 'build', 'web')));
-
-// Ruta principal - servir index.html
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'build', 'web', 'index.html'));
-});
+const webPath = path.join(__dirname, 'public');
+if (fs.existsSync(webPath)) {
+  app.use(express.static(webPath));
+  app.get('/', (_req, res) => {
+    res.sendFile(path.join(webPath, 'index.html'));
+  });
+} else {
+  // Fallback para desarrollo local
+  app.use(express.static(path.join(__dirname, '..', 'build', 'web')));
+  app.get('/', (_req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'build', 'web', 'index.html'));
+  });
+}
 
 // Endpoint para diagnosticar conexión Socket.IO
 app.get('/socket-io-test', (req, res) => {
