@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:network_info_plus/network_info_plus.dart';
+import 'dart:html' as html;
 
 class ServerDiscovery {
   static const _defaultPort = 8080;
@@ -11,6 +13,27 @@ class ServerDiscovery {
   static const _pathsToTry = ['/health', '/ip', '/'];
 
   Stream<DiscoveredServer> discover({int port = _defaultPort}) async* {
+    // En web, intentar detectar desde la URL actual
+    if (kIsWeb) {
+      try {
+        final currentUrl = html.window.location.href;
+        final uri = Uri.parse(currentUrl);
+        if (uri.host.isNotEmpty && uri.host != 'localhost') {
+          // Si estamos accediendo por IP, usar esa IP
+          final serverUrl = '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}';
+          print('[Discovery] Web: detected server from URL: $serverUrl');
+          yield DiscoveredServer(ip: uri.host, port: uri.hasPort ? uri.port : 80, url: serverUrl);
+          return;
+        }
+      } catch (e) {
+        print('[Discovery] Web: error detecting from URL: $e');
+      }
+      
+      // Si no se pudo detectar, intentar localhost
+      yield DiscoveredServer(ip: '127.0.0.1', port: 8080, url: 'http://127.0.0.1:8080');
+      return;
+    }
+    
     // Primero verificar localhost (misma PC)
     final localhostServer = await _checkServer('127.0.0.1', port);
     if (localhostServer != null) {
