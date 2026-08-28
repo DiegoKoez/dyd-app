@@ -42,9 +42,17 @@ if (webPath) {
     res.sendFile(path.join(webPath, 'index.html'));
   });
 } else {
-  console.log('[server] No web files found, API only mode');
+  console.log('[server] No web files found, serving simple HTML');
   app.get('/', (_req, res) => {
-    res.json({ ok: true, message: 'DYD Server API - No web client deployed' });
+    res.send(`<!DOCTYPE html>
+<html>
+<head><title>DYD Server</title></head>
+<body>
+<h1>DYD Server is running!</h1>
+<p>Server time: ${new Date().toISOString()}</p>
+<p>Web files not found. Please deploy the web client.</p>
+</body>
+</html>`);
   });
 }
 
