@@ -455,13 +455,13 @@ class GameSession extends ChangeNotifier {
     print('[GameSession] Received response: $response');
     roomCode = response['code'] as String;
     isDm = true;
-    // Guardar sesión para restaurar en web
-    await ServerPrefs.saveSession(
-      roomCode: roomCode!,
-      playerId: myPlayerId ?? '',
-      playerName: null,
-      isDm: true,
-    );
+      // Guardar sesión para restaurar en web
+      await ServerPrefs.saveSession(
+        roomCode: roomCode!,
+        playerId: myPlayerId ?? 'dm-${DateTime.now().millisecondsSinceEpoch}',
+        playerName: null,
+        isDm: true,
+      );
     notifyListeners();
     print('[GameSession] roomCode set to: $roomCode');
     return roomCode!;
@@ -493,24 +493,33 @@ class GameSession extends ChangeNotifier {
     }
     
     try {
-      // Emitir evento con el playerId
-      _socketService.emit('player:joinRoom', {
-        'code': code,
-        'playerName': playerName,
-        if (characterJson != null) 'character': characterJson,
-        'playerId': playerId,  // Siempre enviar el playerId
-      });
+      // Emitir evento y esperar respuesta del servidor
+      final response = await _socketService.emitWithResponse(
+        'player:joinRoom',
+        {
+          'code': code,
+          'playerName': playerName,
+          if (characterJson != null) 'character': characterJson,
+          'playerId': playerId,
+        },
+        'player:joinResponse',
+      );
       
-      // Esperar un momento para que el servidor procese
-      await Future.delayed(const Duration(seconds: 2));
+      print('[GameSession] joinRoom response: $response');
+      
+      if (response['success'] != true) {
+        return response['error'] as String? ?? 'No se pudo unir a la sala';
+      }
+      
+      final serverPlayerId = response['playerId'] as String?;
       
       roomCode = code;
       isDm = false;
-      myPlayerId = playerId;
+      myPlayerId = serverPlayerId ?? playerId;
       // Guardar sesión para restaurar en web
       await ServerPrefs.saveSession(
         roomCode: code,
-        playerId: playerId,
+        playerId: myPlayerId ?? playerId,
         playerName: playerName,
         isDm: false,
       );
