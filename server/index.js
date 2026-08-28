@@ -20,17 +20,31 @@ app.use(cors({
 }));
 
 // Servir archivos web de Flutter
-const webPath = path.join(__dirname, 'public');
-if (fs.existsSync(webPath)) {
+const possiblePaths = [
+  path.join(__dirname, 'public'),
+  path.join(__dirname, '..', 'build', 'web'),
+  path.join(process.cwd(), 'server', 'public'),
+  path.join(process.cwd(), 'public'),
+];
+
+let webPath = null;
+for (const p of possiblePaths) {
+  if (fs.existsSync(p)) {
+    webPath = p;
+    break;
+  }
+}
+
+if (webPath) {
+  console.log('[server] Serving web files from:', webPath);
   app.use(express.static(webPath));
   app.get('/', (_req, res) => {
     res.sendFile(path.join(webPath, 'index.html'));
   });
 } else {
-  // Fallback para desarrollo local
-  app.use(express.static(path.join(__dirname, '..', 'build', 'web')));
+  console.log('[server] No web files found, API only mode');
   app.get('/', (_req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'build', 'web', 'index.html'));
+    res.json({ ok: true, message: 'DYD Server API - No web client deployed' });
   });
 }
 
