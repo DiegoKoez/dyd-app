@@ -120,7 +120,7 @@ const io = new Server(server, {
   cors: { origin: '*' },
   pingInterval: 25000,
   pingTimeout: 60000,
-  transports: ['polling', 'websocket'],
+  transports: ['websocket'],
 });
 
 const MONSTER_PHOTOS_FILE = path.join(__dirname, '..', 'data', 'monster_photos.json');

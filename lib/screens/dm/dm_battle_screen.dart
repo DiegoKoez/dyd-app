@@ -127,7 +127,7 @@ class DmBattleScreen extends StatelessWidget {
     final picker = ImagePicker();
     final photo = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
     if (photo == null) return;
-    final bytes = await File(photo.path).readAsBytes();
+    final bytes = await photo.readAsBytes();
     session.sharePhoto(base64Encode(bytes));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -139,7 +139,7 @@ class DmBattleScreen extends StatelessWidget {
     final picker = ImagePicker();
     final photo = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
     if (photo == null) return;
-    final bytes = await File(photo.path).readAsBytes();
+    final bytes = await photo.readAsBytes();
     session.setMonsterPhoto(instanceId, base64Encode(bytes));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(

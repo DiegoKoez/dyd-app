@@ -69,7 +69,7 @@ class _PlayerLobbyScreenState extends State<PlayerLobbyScreen> {
     final picker = ImagePicker();
     final photo = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
     if (photo == null) return;
-    final bytes = await File(photo.path).readAsBytes();
+    final bytes = await photo.readAsBytes();
     final session = context.read<GameSession>();
     final currentChar = session.myCharacter ?? widget.character;
     final updated = currentChar.copyWith(photoBase64: base64Encode(bytes));

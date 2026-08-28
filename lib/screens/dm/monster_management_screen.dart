@@ -204,14 +204,14 @@ Future<Monster?> showMonsterEditDialog(
               GestureDetector(
                 onTap: () async {
                   final picker = ImagePicker();
-                  final photo = await picker.pickImage(
-                    source: ImageSource.gallery,
-                    imageQuality: 70,
-                  );
-                  if (photo == null) return;
-                  final bytes = await File(photo.path).readAsBytes();
-                  setState(() {
-                    photoBase64 = base64Encode(bytes);
+                   final photo = await picker.pickImage(
+                     source: ImageSource.gallery,
+                     imageQuality: 70,
+                   );
+                   if (photo == null) return;
+                   final bytes = await photo.readAsBytes();
+                   setState(() {
+                     photoBase64 = base64Encode(bytes);
                   });
                 },
                 child: CircleAvatar(

@@ -105,10 +105,9 @@ class SocketService {
     final socket = io.io(
       effectiveUrl,
       <String, dynamic>{
-        'transports': ['polling'],
+        'transports': ['websocket'],
         'autoConnect': false,
         'timeout': 60000,
-        'upgrade': false,
       },
     );
     _socket = socket;
