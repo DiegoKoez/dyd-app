@@ -73,6 +73,7 @@ class _PlayerLobbyScreenState extends State<PlayerLobbyScreen> {
     final session = context.read<GameSession>();
     final currentChar = session.myCharacter ?? widget.character;
     final updated = currentChar.copyWith(photoBase64: base64Encode(bytes));
+    session.myCharacter = updated;  // Actualizar en la sesión
     session.sendCharacter(updated);
     if (mounted) {
       setState(() {});

@@ -87,26 +87,54 @@ class RoomManager {
       if (wasInRoom) {
         const player = room.players.get(socketId);
         playerId = player.id ?? socketId;
+        
+        // Marcar como desconectado pero NO eliminar inmediatamente
+        // El jugador tiene 60 segundos para reconectar
+        player.disconnected = true;
+        player.disconnectTime = Date.now();
+        
         this.disconnectedPlayers.set(playerId, {
           roomCode: room.code,
           player,
+          socketId,
         });
-        room.players.delete(socketId);
+        
+        // No eliminar de room.players - esperar reconexión
+        // room.players.delete(socketId);
+        
         if (room.dmSocketId === socketId) {
           room.dmDisconnected = true;
         }
-        if (room.battleStarted) {
-          const player = room.players.get(socketId);
-          const playerId = player?.id ?? socketId;
-          room.turnOrder = room.turnOrder.filter((id) => id !== playerId);
-          if (room.turnOrder.length > 0 && room.currentTurnIndex >= room.turnOrder.length) {
-            room.currentTurnIndex = 0;
-          }
-        }
+        // No eliminar de turnOrder
         affected.push(room);
       }
     }
     return { rooms: affected, playerId };
+  }
+  
+  // Limpiar jugadores que no se reconectaron después de 60 segundos
+  cleanupDisconnectedPlayers() {
+    const now = Date.now();
+    const timeout = 60000; // 60 segundos
+    
+    for (const [playerId, data] of this.disconnectedPlayers) {
+      if (data.player.disconnectTime && now - data.player.disconnectTime > timeout) {
+        // Eliminar jugador de la sala
+        const room = this.rooms.get(data.roomCode);
+        if (room) {
+          // Eliminar de players
+          for (const [sid, p] of room.players) {
+            if ((p.id ?? sid) === playerId) {
+              room.players.delete(sid);
+              break;
+            }
+          }
+          // Eliminar de turnOrder
+          room.turnOrder = room.turnOrder.filter((id) => id !== playerId);
+        }
+        this.disconnectedPlayers.delete(playerId);
+      }
+    }
   }
 }
 

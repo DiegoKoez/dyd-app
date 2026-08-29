@@ -809,7 +809,12 @@ udpSocket.on('error', (err) => {
   udpSocket.send(message, DISCOVERY_PORT, broadcastAddress, (err) => {
     if (err) console.error('Error broadcasting discovery:', err.message);
   });
-}, 60000);
+  }, 60000);
+
+  // Limpiar jugadores desconectados cada 10 segundos
+  setInterval(() => {
+    roomManager.cleanupDisconnectedPlayers();
+  }, 10000);
 
 // Catch uncaught exceptions
 process.on('uncaughtException', (err) => {
