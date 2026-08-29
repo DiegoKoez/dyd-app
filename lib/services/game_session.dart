@@ -427,15 +427,6 @@ class GameSession extends ChangeNotifier {
       notifyListeners();
     });
 
-    _socketService.on('item:received', (data) {
-      print('[item] item:received arrived data=$data');
-      final map = Map<String, dynamic>.from(data as Map);
-      final item = GameItem.fromJson(map);
-      lastReceivedItem = item;
-      print('[item] item received name=${item.name}');
-      notifyListeners();
-    });
-
     _socketService.on('weapon:assigned', (data) {
       print('[weapon] weapon:assigned arrived data=$data');
       final map = Map<String, dynamic>.from(data as Map);
