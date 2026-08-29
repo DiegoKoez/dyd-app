@@ -306,6 +306,49 @@ io.on('connection', (socket) => {
     io.to(room.code).emit('room:playersUpdated', roomManager.serializePlayers(room));
   });
 
+  // Manejar reconexión de jugadores
+  socket.on('player:reconnect', ({ playerId, roomCode }) => {
+    console.log('[reconnect] playerId=' + playerId + ' roomCode=' + roomCode + ' newSocketId=' + socket.id);
+    
+    if (!playerId || !roomCode) {
+      socket.emit('player:reconnectResponse', { success: false, error: 'Faltan datos' });
+      return;
+    }
+    
+    const result = roomManager.reconnectPlayer(roomCode, socket.id, playerId);
+    
+    if (result) {
+      socket.join(roomCode);
+      console.log('[reconnect] Player reconnected successfully');
+      
+      // Enviar respuesta con el estado actual
+      socket.emit('player:reconnectResponse', {
+        success: true,
+        roomCode: roomCode,
+        playerId: playerId,
+        battleStarted: result.room.battleStarted,
+        inBattle: result.room.battleStarted,
+      });
+      
+      // Actualizar lista de jugadores
+      io.to(roomCode).emit('room:playersUpdated', roomManager.serializePlayers(result.room));
+      
+      // Si hay una batalla en curso, enviar el estado
+      if (result.room.battleStarted) {
+        console.log('[reconnect] Sending battle state to reconnected player');
+        socket.emit('battle:started', {
+          monsters: result.room.monsters,
+          players: roomManager.serializePlayers(result.room),
+          turnOrder: result.room.turnOrder,
+          currentTurnId: result.room.turnOrder[result.room.currentTurnIndex],
+        });
+      }
+    } else {
+      console.log('[reconnect] Failed to reconnect player');
+      socket.emit('player:reconnectResponse', { success: false, error: 'No se pudo reconectar' });
+    }
+  });
+
   socket.on('dm:startBattle', ({ code, monsters, turnOrder }, ack) => {
     const room = roomManager.getRoom(code);
     if (!room) {

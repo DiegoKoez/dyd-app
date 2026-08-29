@@ -87,6 +87,15 @@ class GameSession extends ChangeNotifier {
       print('[socket] connected to $url');
       _registerListeners();
       await restoreCharacterAfterReconnect();
+      
+      // Intentar reconectar a la sala si teníamos una sesión
+      if (myPlayerId != null && roomCode != null && roomCode!.isNotEmpty) {
+        _socketService.emit('player:reconnect', {
+          'playerId': myPlayerId,
+          'roomCode': roomCode,
+        });
+      }
+      
       notifyListeners();
       return true;
     } catch (e) {
@@ -302,6 +311,22 @@ class GameSession extends ChangeNotifier {
       currentTurnId = null;
       monsters = [];
       notifyListeners();
+    });
+
+    _socketService.on('player:reconnectResponse', (data) {
+      print('[GameSession] player:reconnectResponse received: $data');
+      try {
+        final map = Map<String, dynamic>.from(data as Map);
+        if (map['success'] == true) {
+          print('[GameSession] Reconnected successfully to room ${map['roomCode']}');
+          connected = true;
+          notifyListeners();
+        } else {
+          print('[GameSession] Reconnect failed: ${map['error']}');
+        }
+      } catch (e) {
+        print('[GameSession] player:reconnectResponse error: $e');
+      }
     });
 
     _socketService.on('battle:startError', (data) {

@@ -40,25 +40,63 @@ class RoomManager {
     return this.rooms.get(code);
   }
 
-  joinRoom(code, socketId, playerName, playerId) {
+  // Reconectar jugador con nuevo socket ID
+  reconnectPlayer(code, newSocketId, playerId) {
     const room = this.rooms.get(code);
     if (!room) return null;
-
-    const saved = this.disconnectedPlayers.get(playerId ?? socketId);
-    if (saved && saved.roomCode === code) {
-      room.players.set(socketId, saved.player);
-      this.disconnectedPlayers.delete(saved.player.id ?? playerId ?? socketId);
-    } else {
-      room.players.set(socketId, {
-        id: playerId ?? socketId,
-        name: playerName,
-        character: null,
-        inventory: [],
-        weapons: [],
-        customizing: true,
-      });
+    
+    // Buscar al jugador en la sala por su playerId
+    let foundPlayer = null;
+    let oldSocketId = null;
+    for (const [sid, player] of room.players) {
+      if ((player.id ?? sid) === playerId) {
+        foundPlayer = player;
+        oldSocketId = sid;
+        break;
+      }
     }
-    return room;
+    
+    if (foundPlayer) {
+      // Actualizar socket ID
+      room.players.delete(oldSocketId);
+      room.players.set(newSocketId, foundPlayer);
+      foundPlayer.disconnected = false;
+      foundPlayer.disconnectTime = null;
+      
+      // Limpiar de disconnectedPlayers
+      this.disconnectedPlayers.delete(playerId);
+      
+      return { room, player: foundPlayer, reconnected: true };
+    }
+    
+    // No encontrado, verificar en disconnectedPlayers
+    const saved = this.disconnectedPlayers.get(playerId);
+    if (saved && saved.roomCode === code) {
+      room.players.set(newSocketId, saved.player);
+      saved.player.disconnected = false;
+      saved.player.disconnectTime = null;
+      this.disconnectedPlayers.delete(playerId);
+      return { room, player: saved.player, reconnected: true };
+    }
+    
+    return null;
+  }
+
+  // Verificar si un jugador está en alguna sala
+  findRoomByPlayerId(playerId) {
+    for (const [code, room] of this.rooms) {
+      for (const [sid, player] of room.players) {
+        if ((player.id ?? sid) === playerId) {
+          return { room, code, socketId: sid };
+        }
+      }
+    }
+    // Verificar en disconnectedPlayers
+    const saved = this.disconnectedPlayers.get(playerId);
+    if (saved) {
+      return { room: this.rooms.get(saved.roomCode), code: saved.roomCode, socketId: saved.socketId };
+    }
+    return null;
   }
 
   serializePlayers(room) {
