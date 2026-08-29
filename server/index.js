@@ -268,6 +268,18 @@ io.on('connection', (socket) => {
       socket.emit('player:joinResponse', { success: true, playerId: newPlayerId });
       console.log('[join] emitting room:playersUpdated to room=' + code);
       io.to(room.code).emit('room:playersUpdated', roomManager.serializePlayers(room));
+      
+      // Si la batalla ya comenzó, enviar el estado de la batalla al jugador que se unió
+      if (room.battleStarted) {
+        console.log('[join] Battle already started, sending battle state to new player');
+        socket.emit('battle:started', {
+          monsters: room.monsters,
+          players: roomManager.serializePlayers(room),
+          turnOrder: room.turnOrder,
+          currentTurnId: room.turnOrder[room.currentTurnIndex],
+        });
+      }
+      
       console.log('[join] player joined room=' + code + ' socket=' + socket.id + ' playerId=' + newPlayerId);
     } catch (err) {
       console.error('[join] player:joinRoom error', err);

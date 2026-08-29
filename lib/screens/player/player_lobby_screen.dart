@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,10 @@ class _PlayerLobbyScreenState extends State<PlayerLobbyScreen> {
     _session.myCurrentHp ??= widget.character.maxHp;
     _session.sendCharacter(widget.character);
     _session.addListener(_onSessionChanged);
+    
+    // Listener para cuando la página vuelve a estar visible (después de minimizar)
+    _setupVisibilityListener();
+    
     if (_session.battleStarted && !_battlePushed) {
       _battlePushed = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,8 +49,38 @@ class _PlayerLobbyScreenState extends State<PlayerLobbyScreen> {
     }
   }
 
+  void _setupVisibilityListener() {
+    // Cuando la página vuelve a estar visible, verificar si hay una batalla en curso
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted && _session.battleStarted && !_battlePushed) {
+        _battlePushed = true;
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const PlayerBattleScreen()),
+        );
+      }
+    });
+    
+    // Verificar periódicamente si la batalla comenzó (cada 2 segundos)
+    _startBattleCheckTimer();
+  }
+
+  Timer? _battleCheckTimer;
+  
+  void _startBattleCheckTimer() {
+    _battleCheckTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (mounted && _session.battleStarted && !_battlePushed) {
+        _battlePushed = true;
+        _battleCheckTimer?.cancel();
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const PlayerBattleScreen()),
+        );
+      }
+    });
+  }
+
   @override
   void dispose() {
+    _battleCheckTimer?.cancel();
     _session.removeListener(_onSessionChanged);
     super.dispose();
   }
