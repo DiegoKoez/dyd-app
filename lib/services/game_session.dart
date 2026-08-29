@@ -287,7 +287,14 @@ class GameSession extends ChangeNotifier {
       print('[socket] weapon:received data=$data');
       try {
         final map = Map<String, dynamic>.from(data as Map);
-        lastReceivedWeapon = GameItem.fromJson(map);
+        final weapon = GameItem.fromJson(map);
+        lastReceivedWeapon = weapon;
+        // Agregar a armas si no está ya
+        final alreadyInWeapons = myWeapons.any((w) => w.id == weapon.id);
+        if (!alreadyInWeapons) {
+          myWeapons.add(weapon);
+          print('[socket] Weapon added: ${weapon.name}');
+        }
         notifyListeners();
       } catch (e) {
         print('[socket] weapon:received error=$e');
@@ -298,7 +305,14 @@ class GameSession extends ChangeNotifier {
       print('[socket] item:received data=$data');
       try {
         final map = Map<String, dynamic>.from(data as Map);
-        lastReceivedItem = GameItem.fromJson(map);
+        final item = GameItem.fromJson(map);
+        lastReceivedItem = item;
+        // Agregar al inventario si no está ya
+        final alreadyInInventory = myInventory.any((i) => i.id == item.id);
+        if (!alreadyInInventory) {
+          myInventory.add(item);
+          print('[socket] Item added to inventory: ${item.name}');
+        }
         notifyListeners();
       } catch (e) {
         print('[socket] item:received error=$e');

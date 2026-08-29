@@ -40,6 +40,29 @@ class RoomManager {
     return this.rooms.get(code);
   }
 
+  joinRoom(code, socketId, playerName, playerId) {
+    const room = this.rooms.get(code);
+    if (!room) return null;
+
+    const saved = this.disconnectedPlayers.get(playerId ?? socketId);
+    if (saved && saved.roomCode === code) {
+      room.players.set(socketId, saved.player);
+      saved.player.disconnected = false;
+      saved.player.disconnectTime = null;
+      this.disconnectedPlayers.delete(saved.player.id ?? playerId ?? socketId);
+    } else {
+      room.players.set(socketId, {
+        id: playerId ?? socketId,
+        name: playerName,
+        character: null,
+        inventory: [],
+        weapons: [],
+        customizing: true,
+      });
+    }
+    return room;
+  }
+
   // Reconectar jugador con nuevo socket ID
   reconnectPlayer(code, newSocketId, playerId) {
     const room = this.rooms.get(code);
